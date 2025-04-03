@@ -17,7 +17,7 @@ async fn main() -> Result<(), rocket::Error> {
 
     rocket::build()
         .manage(pool)
-        .mount("/service", routes![add_service])
+        .mount("/service", routes![add_service, get_service])
         .launch()
         .await?;
 

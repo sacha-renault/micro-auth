@@ -8,9 +8,24 @@ use crate::core::errors;
 fn validate_service_creation(
     service: &ServiceCreationRequest,
 ) -> Result<(), errors::ValidationError> {
-    // TODO validate the service and return a result with
-    // More specific Err
-    return Ok(());
+    // get name
+    let name = &service.name;
+
+    // Ensure long enough
+    if name.len() < 3 {
+        return Err(errors::ValidationError::NameTooShort);
+    }
+
+    // Ensure not too long
+    if name.len() > 24 {
+        return Err(errors::ValidationError::NameTooLong);
+    }
+
+    // Ensure no weird ass chars
+    if !name.chars().all(|c| c.is_alphanumeric()) {
+        return Err(errors::ValidationError::InvalidCharacters);
+    }
+    Ok(())
 }
 
 pub async fn add_service(
@@ -22,7 +37,7 @@ pub async fn add_service(
 
     // Insert the service and return it id
     let result = sqlx::query("INSERT INTO services (name) VALUES (?)")
-        .bind(service.0)
+        .bind(service.name)
         .execute(pool)
         .await?;
 

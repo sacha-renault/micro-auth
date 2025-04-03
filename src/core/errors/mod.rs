@@ -1,5 +1,10 @@
+mod validation;
+
 use derive_more::From;
 use serde::Serialize;
+
+// use + reexport Error
+pub use validation::ValidationError;
 
 #[derive(Debug, From, Serialize)]
 pub enum ApiError {
@@ -15,9 +20,6 @@ pub enum ApiError {
 
     Conflict(ConflictError),
 }
-
-#[derive(Serialize, Debug, From)]
-pub struct ValidationError(pub String);
 
 #[derive(Serialize, Debug, From)]
 pub struct NotFoundError(pub String);
