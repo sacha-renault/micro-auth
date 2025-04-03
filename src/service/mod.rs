@@ -3,11 +3,16 @@ pub mod interfaces;
 pub mod model;
 
 use rocket::serde::json::Json;
-use rocket::{post, State};
+use rocket::{post, Route, State};
 use rocket_responder::*;
 use sqlx::{Pool, Sqlite};
 
 use crate::core::errors::ApiError;
+
+/// Helper function where routes are defined
+pub fn routes() -> Vec<Route> {
+    rocket::routes![add_service, get_service_by_id, get_service_by_name]
+}
 
 #[post("/create", data = "<service_request>")]
 pub async fn add_service(
