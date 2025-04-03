@@ -1,9 +1,13 @@
+mod schema;
+
 use sqlx::sqlite::SqliteConnectOptions;
 use sqlx::SqlitePool;
 use std::path::Path;
 use std::str::FromStr;
 
 use crate::core::DbPool;
+
+pub use schema::create_tables;
 
 pub async fn open_or_create_db(path: &str) -> Result<DbPool, sqlx::Error> {
     // Ensure parent directory exists

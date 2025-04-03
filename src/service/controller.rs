@@ -1,9 +1,9 @@
-use sqlx::{Pool, Sqlite};
+use chrono::Utc;
 
 use super::interfaces::ServiceCreationRequest;
 use super::model::Service;
 
-use crate::core::{errors, DbPool};
+use crate::core::{errors, DbPool, DbType};
 
 /// Validates a service creation request
 ///
@@ -51,10 +51,14 @@ pub async fn add_service(
     validate_service_creation(&service)?;
 
     // Insert the service and return it id
-    let result = sqlx::query("INSERT INTO services (name) VALUES (?)")
-        .bind(service.name)
-        .execute(pool)
-        .await?;
+    let result = sqlx::query(
+        "INSERT INTO services (name, permission_required, created_at) VALUES (?, ?, ?)",
+    )
+    .bind(service.name)
+    .bind(service.permission_required)
+    .bind(Utc::now().naive_utc())
+    .execute(pool)
+    .await?;
 
     // Get the last inserted ID
     let id = result.last_insert_rowid();
@@ -71,7 +75,7 @@ pub async fn add_service(
 /// * `Result<Service, errors::ApiError>` - The service if found or an error
 pub async fn get_service_by_id(id: i64, pool: &DbPool) -> Result<Service, errors::ApiError> {
     // Fetch from database
-    let service = sqlx::query_as::<Sqlite, Service>("SELECT id, name FROM services WHERE id = ?")
+    let service = sqlx::query_as::<DbType, Service>("SELECT * FROM services WHERE id = ?")
         .bind(id)
         .fetch_optional(pool)
         .await?;
@@ -93,7 +97,7 @@ pub async fn get_service_by_id(id: i64, pool: &DbPool) -> Result<Service, errors
 /// * `Result<Service, errors::ApiError>` - The service if found or an error
 pub async fn get_service_by_name(name: &str, pool: &DbPool) -> Result<Service, errors::ApiError> {
     // Fetch from database
-    let service = sqlx::query_as::<Sqlite, Service>("SELECT id, name FROM services WHERE name = ?")
+    let service = sqlx::query_as::<DbType, Service>("SELECT * FROM services WHERE name = ?")
         .bind(name)
         .fetch_optional(pool)
         .await?;

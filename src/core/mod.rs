@@ -4,3 +4,4 @@ pub mod errors;
 pub mod response;
 
 pub type DbPool = Pool<Sqlite>;
+pub type DbType = Sqlite;

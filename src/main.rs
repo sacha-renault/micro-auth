@@ -12,6 +12,9 @@ async fn main() -> Result<(), rocket::Error> {
     let pool = database::open_or_create_db("db.sqlite")
         .await
         .expect("Couldn't open database");
+    database::create_tables(&pool)
+        .await
+        .expect("Couldn't create table");
 
     rocket::build()
         .manage(pool)
