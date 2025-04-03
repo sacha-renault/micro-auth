@@ -61,12 +61,12 @@ pub async fn get_service_by_id(id: i64, pool: &Pool<Sqlite>) -> Result<Service, 
 }
 
 pub async fn get_service_by_name(
-    name: String,
+    name: &str,
     pool: &Pool<Sqlite>,
 ) -> Result<Service, errors::ApiError> {
     // Fetch from database
     let service = sqlx::query_as::<Sqlite, Service>("SELECT id, name FROM services WHERE name = ?")
-        .bind(&name)
+        .bind(name)
         .fetch_optional(pool)
         .await?;
 
