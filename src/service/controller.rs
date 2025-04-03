@@ -3,7 +3,7 @@ use sqlx::{Pool, Sqlite};
 use super::interfaces::ServiceCreationRequest;
 use super::model::Service;
 
-use crate::core::errors;
+use crate::core::{errors, DbPool};
 
 /// Validates a service creation request
 ///
@@ -45,7 +45,7 @@ fn validate_service_creation(
 /// * `Result<i64, errors::ApiError>` - The ID of the newly created service or an error
 pub async fn add_service(
     service: ServiceCreationRequest,
-    pool: &Pool<Sqlite>,
+    pool: &DbPool,
 ) -> Result<i64, errors::ApiError> {
     // Validate the service
     validate_service_creation(&service)?;
@@ -69,7 +69,7 @@ pub async fn add_service(
 ///
 /// # Returns
 /// * `Result<Service, errors::ApiError>` - The service if found or an error
-pub async fn get_service_by_id(id: i64, pool: &Pool<Sqlite>) -> Result<Service, errors::ApiError> {
+pub async fn get_service_by_id(id: i64, pool: &DbPool) -> Result<Service, errors::ApiError> {
     // Fetch from database
     let service = sqlx::query_as::<Sqlite, Service>("SELECT id, name FROM services WHERE id = ?")
         .bind(id)
@@ -91,10 +91,7 @@ pub async fn get_service_by_id(id: i64, pool: &Pool<Sqlite>) -> Result<Service, 
 ///
 /// # Returns
 /// * `Result<Service, errors::ApiError>` - The service if found or an error
-pub async fn get_service_by_name(
-    name: &str,
-    pool: &Pool<Sqlite>,
-) -> Result<Service, errors::ApiError> {
+pub async fn get_service_by_name(name: &str, pool: &DbPool) -> Result<Service, errors::ApiError> {
     // Fetch from database
     let service = sqlx::query_as::<Sqlite, Service>("SELECT id, name FROM services WHERE name = ?")
         .bind(name)

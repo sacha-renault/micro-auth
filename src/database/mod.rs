@@ -1,9 +1,11 @@
 use sqlx::sqlite::SqliteConnectOptions;
-use sqlx::{Pool, Sqlite, SqlitePool};
+use sqlx::SqlitePool;
 use std::path::Path;
 use std::str::FromStr;
 
-pub async fn open_or_create_db(path: &str) -> Result<Pool<Sqlite>, sqlx::Error> {
+use crate::core::DbPool;
+
+pub async fn open_or_create_db(path: &str) -> Result<DbPool, sqlx::Error> {
     // Ensure parent directory exists
     if let Some(parent) = Path::new(path).parent() {
         if !parent.exists() {

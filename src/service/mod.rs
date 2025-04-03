@@ -8,6 +8,7 @@ use rocket_responder::*;
 use sqlx::{Pool, Sqlite};
 
 use crate::core::errors::ApiError;
+use crate::core::DbPool;
 
 /// Returns all service-related routes for mounting in the application
 pub fn routes() -> Vec<Route> {
@@ -25,7 +26,7 @@ pub fn routes() -> Vec<Route> {
 #[post("/create", data = "<service_request>")]
 pub async fn add_service(
     service_request: Json<interfaces::ServiceCreationRequest>,
-    pool: &State<Pool<Sqlite>>,
+    pool: &State<DbPool>,
 ) -> ApiResponse<i64, ApiError> {
     match controller::add_service(service_request.0, pool).await {
         Ok(id) => ok(id),
@@ -44,7 +45,7 @@ pub async fn add_service(
 #[get("/id/<id>")]
 pub async fn get_service_by_id(
     id: i64,
-    pool: &State<Pool<Sqlite>>,
+    pool: &State<DbPool>,
 ) -> ApiResponse<model::Service, ApiError> {
     match controller::get_service_by_id(id, pool).await {
         Ok(service) => ok(service),
@@ -63,7 +64,7 @@ pub async fn get_service_by_id(
 #[get("/name/<name>")]
 pub async fn get_service_by_name(
     name: &str,
-    pool: &State<Pool<Sqlite>>,
+    pool: &State<DbPool>,
 ) -> ApiResponse<model::Service, ApiError> {
     match controller::get_service_by_name(name, pool).await {
         Ok(service) => ok(service),
