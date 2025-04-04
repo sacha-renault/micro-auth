@@ -20,6 +20,7 @@ async fn main() -> Result<(), rocket::Error> {
     rocket::build()
         .manage(pool)
         .mount("/service", service::routes())
+        .mount("/role", role::routes())
         .launch()
         .await?;
 

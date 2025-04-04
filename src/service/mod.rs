@@ -1,6 +1,6 @@
-pub mod controller;
-pub mod interfaces;
-pub mod model;
+mod controller;
+mod interfaces;
+mod model;
 
 use rocket::serde::json::Json;
 use rocket::{post, Route, State};
