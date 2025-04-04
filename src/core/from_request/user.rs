@@ -3,9 +3,10 @@ use rocket::request::{FromRequest, Outcome, Request};
 
 use crate::core::errors::ApiError;
 use crate::role::model::{RoleType, UserRole};
+use crate::user::model::User;
 
 pub struct UserFromRequest {
-    user: String,         // We be replaced by User when struct exists
+    user: User,           // We be replaced by User when struct exists
     roles: Vec<UserRole>, // User can have many role depending on the service
 }
 
@@ -23,7 +24,7 @@ impl<'r> FromRequest<'r> for UserFromRequest {
 
 impl UserFromRequest {
     pub fn is_root(&self) -> bool {
-        false // Will check if has id 0 (generated at first)
+        self.user_id() == 1 // only one user is created with id 1, the root
     }
 
     pub fn is_admin(&self, service_id: i64) -> bool {
@@ -42,7 +43,7 @@ impl UserFromRequest {
     }
 
     pub fn user_id(&self) -> i64 {
-        0 // self.user.id;
+        self.user.id
     }
 
     pub fn role_in_service(&self, service_id: i64) -> Option<&RoleType> {

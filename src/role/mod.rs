@@ -5,7 +5,7 @@ use rocket_responder::{ok, ApiResponse};
 use crate::core::{errors::ApiError, from_request::UserFromRequest, DbPool};
 
 mod controller;
-mod interfaces;
+pub mod interfaces;
 pub mod model;
 pub mod services;
 

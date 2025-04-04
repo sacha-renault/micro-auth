@@ -1,5 +1,3 @@
-use serde::ser;
-
 use crate::core::{errors::ApiError, DbPool};
 
 use super::model::{RoleType, UserRole};

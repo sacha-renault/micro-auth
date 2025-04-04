@@ -2,10 +2,16 @@
 extern crate rocket;
 
 // Module declaration
+#[allow(dead_code)]
 mod core;
+#[allow(dead_code)]
 mod database;
+#[allow(dead_code)]
 mod role;
+#[allow(dead_code)]
 mod service;
+#[allow(dead_code)]
+mod user;
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
