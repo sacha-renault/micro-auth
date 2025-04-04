@@ -1,7 +1,11 @@
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::FromRow;
+use sqlx::{
+    prelude::{FromRow, Type},
+    sqlite::SqliteTypeInfo,
+    Encode, Sqlite,
+};
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Encode)]
 pub enum RoleType {
     /// Can do everything
     /// One user only is created as root
@@ -14,6 +18,17 @@ pub enum RoleType {
 
     /// Basic user
     User,
+}
+
+/// Impl type especially for SQLite, might have to change or use #[cfg(sqlite)]
+impl Type<Sqlite> for RoleType {
+    fn type_info() -> SqliteTypeInfo {
+        <&str as Type<Sqlite>>::type_info()
+    }
+
+    fn compatible(ty: &SqliteTypeInfo) -> bool {
+        <&str as Type<Sqlite>>::compatible(ty)
+    }
 }
 
 #[derive(Deserialize, Serialize, FromRow)]

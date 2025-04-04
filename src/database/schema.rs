@@ -19,6 +19,21 @@ pub async fn create_tables(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     .await?;
 
     // Create a table that maps users to permissions for resources
+    query(
+        r#"
+        CREATE TABLE IF NOT EXISTS user_roles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            service_id INTEGER NOT NULL,
+            role_type TEXT NOT NULL,
+            FOREIGN KEY (service_id) REFERENCES services(id),
+            UNIQUE (user_id, service_id)
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
 
+    // If everything went well
     Ok(())
 }
