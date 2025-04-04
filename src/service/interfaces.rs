@@ -5,4 +5,8 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceCreationRequest {
     /// Name of the service
     pub name: String,
+
+    /// If the service requires an admin
+    /// to create the new users
+    pub requires_admin: bool,
 }

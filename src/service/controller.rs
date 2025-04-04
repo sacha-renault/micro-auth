@@ -51,9 +51,12 @@ pub async fn add_service(
     validate_service_creation(&service)?;
 
     // Insert the service and return it id
-    let result = sqlx::query("INSERT INTO services (name, created_at) VALUES (?, ?)")
-        .bind(service.name)
+    let query_str =
+        "INSERT INTO services (name, created_at, requires_admin, is_active) VALUES (?, ?, ?, 1)";
+    let result = sqlx::query(query_str)
+        .bind(&service.name)
         .bind(Utc::now().naive_utc())
+        .bind(&service.requires_admin)
         .execute(pool)
         .await?;
 

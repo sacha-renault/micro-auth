@@ -11,11 +11,15 @@ pub struct Service {
     pub name: String,
 
     /// Creation date
-    created_at: NaiveDateTime,
+    pub created_at: NaiveDateTime,
 
     /// When the service was last updated
     pub updated_at: Option<NaiveDateTime>,
 
     /// Whether the service is currently active
     pub is_active: bool,
+
+    /// If the service requires an admin
+    /// to create the new users
+    pub requires_admin: bool,
 }
