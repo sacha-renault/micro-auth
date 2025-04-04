@@ -3,6 +3,8 @@ extern crate rocket;
 
 // Module declaration
 #[allow(dead_code)]
+mod auth;
+#[allow(dead_code)]
 mod core;
 #[allow(dead_code)]
 mod database;
