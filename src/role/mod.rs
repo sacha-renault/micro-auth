@@ -15,7 +15,7 @@ pub async fn create_role(
     user_assign_request: Json<RoleAssignRequest>,
     pool: &State<DbPool>,
 ) -> ApiResponse<(), ApiError> {
-    match services::assign_role(user_assign_request.0, &user, pool).await {
+    match services::assign_role(user_assign_request.into_inner(), user, pool).await {
         Ok(_) => ok(()),
         Err(err) => ApiResponse::from(err),
     }

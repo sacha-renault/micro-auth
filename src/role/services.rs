@@ -5,7 +5,7 @@ use super::interfaces::RoleAssignRequest;
 
 pub async fn assign_role(
     user_assign_request: RoleAssignRequest,
-    requesting_user: &UserFromRequest, // The user making the request
+    requesting_user: UserFromRequest, // The user making the request
     pool: &DbPool,
 ) -> Result<(), ApiError> {
     // unpack values from request
