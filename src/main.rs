@@ -4,6 +4,7 @@ extern crate rocket;
 // Module declaration
 mod core;
 mod database;
+mod permission;
 mod service;
 
 #[rocket::main]
