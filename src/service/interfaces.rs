@@ -5,8 +5,4 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceCreationRequest {
     /// Name of the service
     pub name: String,
-
-    /// Permission required to create a new
-    /// in this service
-    pub permission_required: i64,
 }

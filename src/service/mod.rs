@@ -5,7 +5,6 @@ pub mod model;
 use rocket::serde::json::Json;
 use rocket::{post, Route, State};
 use rocket_responder::*;
-use sqlx::{Pool, Sqlite};
 
 use crate::core::errors::ApiError;
 use crate::core::DbPool;

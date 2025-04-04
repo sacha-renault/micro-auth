@@ -51,14 +51,11 @@ pub async fn add_service(
     validate_service_creation(&service)?;
 
     // Insert the service and return it id
-    let result = sqlx::query(
-        "INSERT INTO services (name, permission_required, created_at) VALUES (?, ?, ?)",
-    )
-    .bind(service.name)
-    .bind(service.permission_required)
-    .bind(Utc::now().naive_utc())
-    .execute(pool)
-    .await?;
+    let result = sqlx::query("INSERT INTO services (name, created_at) VALUES (?, ?)")
+        .bind(service.name)
+        .bind(Utc::now().naive_utc())
+        .execute(pool)
+        .await?;
 
     // Get the last inserted ID
     let id = result.last_insert_rowid();

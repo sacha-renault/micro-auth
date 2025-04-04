@@ -10,10 +10,6 @@ pub struct Service {
     /// Name of the service
     pub name: String,
 
-    /// Permission required to create a new
-    /// in this service
-    pub permission_required: i64,
-
     /// Creation date
     created_at: NaiveDateTime,
 
