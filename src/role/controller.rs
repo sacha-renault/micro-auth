@@ -1,6 +1,8 @@
+use serde::ser;
+
 use crate::core::{errors::ApiError, DbPool};
 
-use super::model::RoleType;
+use super::model::{RoleType, UserRole};
 
 pub async fn add_role(
     user_id: i64,
@@ -18,19 +20,12 @@ pub async fn add_role(
     Ok(())
 }
 
-pub async fn update_role(
-    user_id: i64,
-    service_id: i64,
-    role: RoleType,
-    pool: &DbPool,
-) -> Result<(), ApiError> {
-    let result =
-        sqlx::query("UPDATE user_roles SET role_type = ? WHERE user_id = ? AND service_id = ?")
-            .bind(role)
-            .bind(user_id)
-            .bind(service_id)
-            .execute(pool)
-            .await?;
+pub async fn update_role(role_id: i64, role: RoleType, pool: &DbPool) -> Result<(), ApiError> {
+    let result = sqlx::query("UPDATE user_roles SET role_type = ? WHERE id = ?")
+        .bind(role)
+        .bind(role_id)
+        .execute(pool)
+        .await?;
 
     // Check if any row was affected
     if result.rows_affected() == 0 {
@@ -55,4 +50,20 @@ pub async fn delete_role(user_id: i64, service_id: i64, pool: &DbPool) -> Result
     }
 
     Ok(())
+}
+
+pub async fn get_user_role_in_service(
+    user_id: i64,
+    service_id: i64,
+    pool: &DbPool,
+) -> Result<Option<UserRole>, ApiError> {
+    let result = sqlx::query_as::<_, UserRole>(
+        "SELECT * FROM user_roles WHERE user_id = ? AND service_id = ?",
+    )
+    .bind(user_id)
+    .bind(service_id)
+    .fetch_optional(pool)
+    .await?;
+
+    Ok(result)
 }

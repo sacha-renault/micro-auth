@@ -22,26 +22,33 @@ impl<'r> FromRequest<'r> for UserFromRequest {
 }
 
 impl UserFromRequest {
-    fn _find_role_for_service(&self, service_id: i64) -> Option<&UserRole> {
-        self.roles.iter().find(|role| role.service_id == service_id)
+    pub fn is_root(&self) -> bool {
+        false // Will check if has id 0 (generated at first)
     }
 
     pub fn is_admin(&self, service_id: i64) -> bool {
         // find the role for the service
-        let role = self._find_role_for_service(service_id);
+        let role_type = self.role_in_service(service_id);
 
         // Is the user admin ?
-        match role {
-            Some(role) => matches!(role.role_type, RoleType::Admin | RoleType::Root),
+        match role_type {
+            Some(role) => matches!(role, RoleType::Admin | RoleType::Root),
             None => false,
         }
     }
 
     pub fn is_user_in(&self, service_id: i64) -> bool {
-        self._find_role_for_service(service_id).is_some()
+        self.role_in_service(service_id).is_some() || self.is_root()
     }
 
     pub fn user_id(&self) -> i64 {
         0 // self.user.id;
+    }
+
+    pub fn role_in_service(&self, service_id: i64) -> Option<&RoleType> {
+        self.roles
+            .iter()
+            .find(|role| role.service_id == service_id)
+            .map(|user_role| &user_role.role_type)
     }
 }
