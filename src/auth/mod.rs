@@ -8,8 +8,8 @@ use rocket_responder::*;
 use interfaces::{AccessToken, UserLogin};
 
 use crate::{
-    core::{errors::ApiError, password, DbPool},
-    user::{interfaces::UserCreationRequest, model::User, services},
+    core::{errors::ApiError, jwt, password, DbPool},
+    user::{interfaces::UserCreationRequest, services},
 };
 
 /// Returns all auth-related routes for mounting in the application
@@ -45,9 +45,12 @@ pub async fn login_user(user_login: Json<UserLogin>, pool: &State<DbPool>) -> Ap
 
     // check if the pwd is correct
     if password::verify(&user_login.password, &user.password_hash) {
-        todo!()
+        // Password is verified, we will use our jwt function to create a token for this User
+        match jwt::encode_token(user.id, jwt::SECRET) {
+            Ok(token) => ok(AccessToken::new(token)),
+            Err(err) => internal_server_error(ApiError::Internal(format!("Error creating the user token ... {err}").into()))
+        }
     } else {
         unauthorized(ApiError::Unauthorized(format!("Wrong email or password").into()))
     }
-    
 }
