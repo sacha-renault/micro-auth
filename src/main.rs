@@ -11,7 +11,7 @@ mod database;
 #[allow(dead_code)]
 mod role;
 #[allow(dead_code)]
-mod service;
+mod scope;
 #[allow(dead_code)]
 mod user;
 
@@ -27,7 +27,7 @@ async fn main() -> Result<(), rocket::Error> {
 
     rocket::build()
         .manage(pool)
-        .mount("/service", service::routes())
+        .mount("/scope", scope::routes())
         .mount("/role", role::routes())
         .launch()
         .await?;

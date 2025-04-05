@@ -7,7 +7,7 @@ use crate::user::model::User;
 
 pub struct UserFromRequest {
     user: User,           // We be replaced by User when struct exists
-    roles: Vec<UserRole>, // User can have many role depending on the service
+    roles: Vec<UserRole>, // User can have many role depending on the scope
 }
 
 #[rocket::async_trait]
@@ -27,9 +27,9 @@ impl UserFromRequest {
         self.user_id() == 1 // only one user is created with id 1, the root
     }
 
-    pub fn is_admin(&self, service_id: i64) -> bool {
-        // find the role for the service
-        let role_type = self.role_in_service(service_id);
+    pub fn is_admin_in_scope(&self, scope_id: i64) -> bool {
+        // find the role for the scope
+        let role_type = self.role_in_scope(scope_id);
 
         // Is the user admin ?
         match role_type {
@@ -38,18 +38,18 @@ impl UserFromRequest {
         }
     }
 
-    pub fn is_user_in(&self, service_id: i64) -> bool {
-        self.role_in_service(service_id).is_some() || self.is_root()
+    pub fn is_user_in_scope(&self, scope_id: i64) -> bool {
+        self.role_in_scope(scope_id).is_some() || self.is_root()
     }
 
     pub fn user_id(&self) -> i64 {
         self.user.id
     }
 
-    pub fn role_in_service(&self, service_id: i64) -> Option<&RoleType> {
+    pub fn role_in_scope(&self, scope_id: i64) -> Option<&RoleType> {
         self.roles
             .iter()
-            .find(|role| role.service_id == service_id)
+            .find(|role| role.scope_id == scope_id)
             .map(|user_role| &user_role.role_type)
     }
 }

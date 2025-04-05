@@ -4,13 +4,13 @@ use super::model::{RoleType, UserRole};
 
 pub async fn add_role(
     user_id: i64,
-    service_id: i64,
+    scope_id: i64,
     role: RoleType,
     pool: &DbPool,
 ) -> Result<(), ApiError> {
-    sqlx::query("INSERT INTO user_roles (user_id, service_id, role_type) VALUES (?, ?, ?)")
+    sqlx::query("INSERT INTO user_roles (user_id, scope_id, role_type) VALUES (?, ?, ?)")
         .bind(user_id)
-        .bind(service_id)
+        .bind(scope_id)
         .bind(role) // This assumes RoleType implements sqlx::Type
         .execute(pool)
         .await?;
@@ -34,10 +34,10 @@ pub async fn update_role(role_id: i64, role: RoleType, pool: &DbPool) -> Result<
     Ok(())
 }
 
-pub async fn delete_role(user_id: i64, service_id: i64, pool: &DbPool) -> Result<(), ApiError> {
-    let result = sqlx::query("DELETE FROM user_roles WHERE user_id = ? AND service_id = ?")
+pub async fn delete_role(user_id: i64, scope_id: i64, pool: &DbPool) -> Result<(), ApiError> {
+    let result = sqlx::query("DELETE FROM user_roles WHERE user_id = ? AND scope_id = ?")
         .bind(user_id)
-        .bind(service_id)
+        .bind(scope_id)
         .execute(pool)
         .await?;
 
@@ -50,16 +50,16 @@ pub async fn delete_role(user_id: i64, service_id: i64, pool: &DbPool) -> Result
     Ok(())
 }
 
-pub async fn get_user_role_in_service(
+pub async fn get_user_role_in_scope(
     user_id: i64,
-    service_id: i64,
+    scope_id: i64,
     pool: &DbPool,
 ) -> Result<Option<UserRole>, ApiError> {
     let result = sqlx::query_as::<_, UserRole>(
-        "SELECT * FROM user_roles WHERE user_id = ? AND service_id = ?",
+        "SELECT * FROM user_roles WHERE user_id = ? AND scope_id = ?",
     )
     .bind(user_id)
-    .bind(service_id)
+    .bind(scope_id)
     .fetch_optional(pool)
     .await?;
 

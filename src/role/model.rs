@@ -8,23 +8,23 @@ use sqlx::{
 #[derive(Debug, Deserialize, Serialize, Clone, Encode, Decode)]
 pub enum RoleType {
     /// Can do everything
-    /// One user only is created as root
-    /// When service start for the first time
-    /// Only one that can create a service
+    /// Has access to every scope
+    /// Should actually not be use, unless to create
+    /// Other admins
     Root,
 
-    /// Can do everything within a service
+    /// Can create or delete scopes
     Admin,
 
-    /// Can edit resources in a certain service
+    /// Can edit resources in a certain scope
     Editor,
 
-    /// Can just access a service
+    /// Can just access a scope
     Member,
 }
 
 impl RoleType {
-    pub fn can_by_created_by(&self, role: &RoleType) -> bool {
+    pub fn can_be_created_by(&self, role: &RoleType) -> bool {
         match (self, role) {
             (Self::Root, _) => true,
             (Self::Admin, Self::Editor | Self::Member) => true,
@@ -48,6 +48,6 @@ impl Type<Sqlite> for RoleType {
 pub struct UserRole {
     pub id: i64,
     pub user_id: i64,
-    pub service_id: i64,
+    pub scope_id: i64,
     pub role_type: RoleType,
 }
