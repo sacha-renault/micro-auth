@@ -9,13 +9,13 @@ use crate::user::model::User;
 use crate::user::services;
 
 #[derive(Debug)]
-pub struct UserContext {
+pub struct AuthenticatedUser {
     user: User,           // We be replaced by User when struct exists
     roles: Vec<UserRole>, // User can have many role depending on the scope
 }
 
 #[rocket::async_trait]
-impl<'r> FromRequest<'r> for UserContext {
+impl<'r> FromRequest<'r> for AuthenticatedUser {
     type Error = ApiError;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
@@ -81,11 +81,11 @@ impl<'r> FromRequest<'r> for UserContext {
             }
         };
 
-        Outcome::Success(UserContext { user, roles: vec![] })
+        Outcome::Success(AuthenticatedUser { user, roles: vec![] })
     }
 }
 
-impl UserContext {
+impl AuthenticatedUser {
     pub fn is_root(&self) -> bool {
         self.user_id() == 1 // only one user is created with id 1, the root
     }

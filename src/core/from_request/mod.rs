@@ -1,3 +1,3 @@
 mod user;
 
-pub use user::UserContext;
+pub use user::AuthenticatedUser;

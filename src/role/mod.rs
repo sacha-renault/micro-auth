@@ -2,7 +2,7 @@ use interfaces::RoleAssignRequest;
 use rocket::{serde::json::Json, Route, State};
 use rocket_responder::{ok, ApiResponse};
 
-use crate::core::{errors::ApiError, from_request::UserContext, DbPool};
+use crate::core::{errors::ApiError, from_request::AuthenticatedUser, DbPool};
 
 mod controller;
 pub mod interfaces;
@@ -11,7 +11,7 @@ pub mod services;
 
 #[post("/create", data = "<user_assign_request>")]
 pub async fn create_role(
-    user: UserContext,
+    user: AuthenticatedUser,
     user_assign_request: Json<RoleAssignRequest>,
     pool: &State<DbPool>,
 ) -> ApiResponse<(), ApiError> {

@@ -7,7 +7,7 @@ use rocket::{post, Route, State};
 use rocket_responder::*;
 
 use crate::core::errors::ApiError;
-use crate::core::from_request::UserContext;
+use crate::core::from_request::AuthenticatedUser;
 use crate::core::DbPool;
 
 /// Returns all scope-related routes for mounting in the application
@@ -26,7 +26,7 @@ pub fn routes() -> Vec<Route> {
 #[post("/create", data = "<scope_request>")]
 pub async fn add_scope(
     scope_request: Json<interfaces::ScopeCreationRequest>,
-    user: UserContext,
+    user: AuthenticatedUser,
     pool: &State<DbPool>,
 ) -> ApiResponse<i64, ApiError> {
     // Creation of scope requires root priviledge
