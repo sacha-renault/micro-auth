@@ -3,7 +3,7 @@ use chrono::Utc;
 use super::interfaces::ScopeCreationRequest;
 use super::model::Scope;
 
-use crate::core::{errors, DbPool, DbType};
+use crate::core::{errors, DbPool};
 
 /// Validates a scope creation request
 ///
