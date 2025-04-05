@@ -16,8 +16,10 @@ pub fn routes() -> Vec<Route> {
 }
 
 /// Creates a new scope in the database
+/// This endpoint is NOT available if user isn't authenticated
 ///
 /// # Parameters
+/// * `user` - AuthenticatedUser that contains user information.
 /// * `scope_request` - JSON payload containing scope creation details
 /// * `pool` - Database connection pool
 ///
@@ -25,8 +27,8 @@ pub fn routes() -> Vec<Route> {
 /// * `ApiResponse<i64>` - Scope ID on success or error response on failure
 #[post("/create", data = "<scope_request>")]
 pub async fn add_scope(
-    scope_request: Json<interfaces::ScopeCreationRequest>,
     user: AuthenticatedUser,
+    scope_request: Json<interfaces::ScopeCreationRequest>,
     pool: &State<DbPool>,
 ) -> ApiResponse<i64, ApiError> {
     // Creation of scope requires root priviledge
