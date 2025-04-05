@@ -1,3 +1,3 @@
 mod user;
 
-pub use user::UserFromRequest;
+pub use user::UserContext;

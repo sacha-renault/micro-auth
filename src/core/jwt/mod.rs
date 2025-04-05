@@ -10,9 +10,9 @@ pub const SECRET: &[u8; 38] = b"Salut, c'est un secret de developement";
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TokenClaims {
-    exp: usize,  // expiration date
-    iat: usize,  // issued at
-    id: i64,     // User ID the token refers to
+    pub exp: usize,  // expiration date
+    pub iat: usize,  // issued at
+    pub id: i64,     // User ID the token refers to
 }
 
 pub fn encode_token(user_id: i64, secret: &[u8]) -> Result<String, jsonwebtoken::errors::Error> {

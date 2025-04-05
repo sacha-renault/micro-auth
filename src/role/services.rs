@@ -1,11 +1,11 @@
-use crate::core::{errors::ApiError, from_request::UserFromRequest, DbPool};
+use crate::core::{errors::ApiError, from_request::UserContext, DbPool};
 
 use super::controller::{add_role, get_user_role_in_scope, update_role};
 use super::interfaces::RoleAssignRequest;
 
 pub async fn assign_role(
     user_assign_request: RoleAssignRequest,
-    requesting_user: UserFromRequest, // The user making the request
+    requesting_user: UserContext, // The user making the request
     pool: &DbPool,
 ) -> Result<(), ApiError> {
     // unpack values from request
