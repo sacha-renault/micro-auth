@@ -29,6 +29,7 @@ async fn main() -> Result<(), rocket::Error> {
         .manage(pool)
         .mount("/scope", scope::routes())
         .mount("/role", role::routes())
+        .mount("/auth", auth::routes())
         .launch()
         .await?;
 

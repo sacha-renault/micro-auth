@@ -2,6 +2,24 @@ use sqlx::query;
 use sqlx::sqlite::SqlitePool;
 
 pub async fn create_tables(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    // Create users table
+    query(
+        r#"
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            first_name TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
+            name TEXT NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP,
+            is_active INTEGER NOT NULL DEFAULT 1
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
     // Create scopes table
     query(
         r#"
