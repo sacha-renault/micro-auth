@@ -12,9 +12,7 @@ use crate::core::{errors, DbPool};
 ///
 /// # Returns
 /// * `Result<(), errors::ValidationError>` - Ok if valid, ValidationError otherwise
-fn validate_scope_creation(
-    scope: &ScopeCreationRequest,
-) -> Result<(), errors::ValidationError> {
+fn validate_scope_creation(scope: &ScopeCreationRequest) -> Result<(), errors::ValidationError> {
     // get name
     let name = &scope.name;
 
@@ -51,8 +49,7 @@ pub async fn add_scope(
     validate_scope_creation(&scope)?;
 
     // Insert the scope and return it id
-    let query_str =
-        "INSERT INTO scopes (name, created_at, is_active) VALUES (?, ?, 1)";
+    let query_str = "INSERT INTO scopes (name, created_at, is_active) VALUES (?, ?, 1)";
     let result = sqlx::query(query_str)
         .bind(&scope.name)
         .bind(Utc::now().naive_utc())

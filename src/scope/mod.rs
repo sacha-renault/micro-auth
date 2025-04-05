@@ -33,7 +33,9 @@ pub async fn add_scope(
 ) -> ApiResponse<i64, ApiError> {
     // Creation of scope requires root priviledge
     if !user.is_root() {
-        return unauthorized(ApiError::Unauthorized(format!("Root priviledge are required").into()));
+        return unauthorized(ApiError::Unauthorized(
+            format!("Root priviledge are required").into(),
+        ));
     }
 
     // Otherwise we can create it
@@ -52,10 +54,7 @@ pub async fn add_scope(
 /// # Returns
 /// * `ApiResponse<model::Scope>` - Scope data on success or error response on failure
 #[get("/id/<id>")]
-pub async fn get_scope_by_id(
-    id: i64,
-    pool: &State<DbPool>,
-) -> ApiResponse<model::Scope, ApiError> {
+pub async fn get_scope_by_id(id: i64, pool: &State<DbPool>) -> ApiResponse<model::Scope, ApiError> {
     match controller::get_scope_by_id(id, pool).await {
         Ok(scope) => ok(scope),
         Err(err) => ApiResponse::from(err),

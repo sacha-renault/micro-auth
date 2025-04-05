@@ -20,16 +20,13 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         // Extract bearer token from Authorization header
-        let token = req
-            .headers()
-            .get_one("Authorization")
-            .and_then(|header| {
-                if header.starts_with("Bearer ") {
-                    Some(header.trim_start_matches("Bearer ").trim())
-                } else {
-                    None
-                }
-            });
+        let token = req.headers().get_one("Authorization").and_then(|header| {
+            if header.starts_with("Bearer ") {
+                Some(header.trim_start_matches("Bearer ").trim())
+            } else {
+                None
+            }
+        });
 
         // Check if token exists
         let token = match token {
@@ -37,7 +34,9 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
             None => {
                 return Outcome::Error((
                     Status::Unauthorized,
-                    ApiError::Unauthorized("Missing or invalid authentication token".to_string().into()),
+                    ApiError::Unauthorized(
+                        "Missing or invalid authentication token".to_string().into(),
+                    ),
                 ));
             }
         };
@@ -52,7 +51,7 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
                 ));
             }
         };
-        
+
         // Get the db managed state
         let pool = match req.guard::<&State<DbPool>>().await {
             Outcome::Success(pool) => pool,
@@ -70,18 +69,20 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
             Ok(None) => {
                 return Outcome::Error((
                     Status::Unauthorized,
-                    ApiError::Unauthorized(format!("User with id {} does not exists", claims.id).into()),
+                    ApiError::Unauthorized(
+                        format!("User with id {} does not exists", claims.id).into(),
+                    ),
                 ));
-            },
+            }
             Err(err) => {
-                return Outcome::Error((
-                    Status::InternalServerError,
-                    err,
-                ));
+                return Outcome::Error((Status::InternalServerError, err));
             }
         };
 
-        Outcome::Success(AuthenticatedUser { user, roles: vec![] })
+        Outcome::Success(AuthenticatedUser {
+            user,
+            roles: vec![],
+        })
     }
 }
 
