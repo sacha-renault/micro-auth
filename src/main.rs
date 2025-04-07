@@ -2,19 +2,12 @@
 extern crate rocket;
 
 // Module declaration
-#[allow(dead_code)]
 mod auth;
-#[allow(dead_code)]
 mod core;
-#[allow(dead_code)]
 mod database;
-#[allow(dead_code)]
 mod revoked_token;
-#[allow(dead_code)]
 mod role;
-#[allow(dead_code)]
 mod scope;
-#[allow(dead_code)]
 mod user;
 
 #[rocket::main]
