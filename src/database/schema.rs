@@ -51,6 +51,18 @@ pub async fn create_tables(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     .execute(pool)
     .await?;
 
+    // Create revoked_tokens table
+    query(
+        r#"
+        CREATE TABLE IF NOT EXISTS revoked_tokens (
+            token TEXT PRIMARY KEY,
+            expiration_date TIMESTAMP NOT NULL
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
     // If everything went well
     Ok(())
 }
