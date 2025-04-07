@@ -9,6 +9,8 @@ mod core;
 #[allow(dead_code)]
 mod database;
 #[allow(dead_code)]
+mod revoked_token;
+#[allow(dead_code)]
 mod role;
 #[allow(dead_code)]
 mod scope;

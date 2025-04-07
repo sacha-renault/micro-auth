@@ -1,17 +1,21 @@
+use chrono::{NaiveDateTime, TimeZone, Utc};
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
 use rocket::State;
 
 use crate::core::errors::ApiError;
 use crate::core::{jwt, DbPool};
+use crate::revoked_token::services as token_services;
 use crate::role::model::{RoleType, UserRole};
 use crate::user::model::User;
-use crate::user::services;
+use crate::user::services as user_services;
 
 #[derive(Debug)]
 pub struct AuthenticatedUser {
-    user: User,           // We be replaced by User when struct exists
-    roles: Vec<UserRole>, // User can have many role depending on the scope
+    pub user: User,           // We be replaced by User when struct exists
+    pub roles: Vec<UserRole>, // User can have many role depending on the scope
+    pub token: String,
+    pub expires_at: NaiveDateTime,
 }
 
 #[rocket::async_trait]
@@ -63,8 +67,21 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
             }
         };
 
+        // Once token is decoded (fast and low-cost operation)
+        // We request db to know if this token was revoked
+        match token_services::is_token_revoked(&token, pool).await {
+            Ok(false) => {} // token isn't revoked, we can continue
+            Ok(true) => {
+                return Outcome::Error((
+                    Status::Unauthorized,
+                    ApiError::Unauthorized("Token was revoked".to_string().into()),
+                ));
+            }
+            Err(err) => return Outcome::Error((Status::InternalServerError, err)),
+        }
+
         // Call user service to ensure the user exists
-        let user = match services::get_user_by_id(claims.id, pool).await {
+        let user = match user_services::get_user_by_id(claims.id, pool).await {
             Ok(Some(user)) => user,
             Ok(None) => {
                 return Outcome::Error((
@@ -74,14 +91,24 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
                     ),
                 ));
             }
-            Err(err) => {
-                return Outcome::Error((Status::InternalServerError, err));
-            }
+            Err(err) => return Outcome::Error((Status::InternalServerError, err)),
+        };
+
+        // Get exp date
+        let expires_at = if let Some(dt) = Utc.timestamp_micros(claims.exp as i64).single() {
+            dt.naive_utc()
+        } else {
+            return Outcome::Error((
+                Status::InternalServerError,
+                ApiError::Internal("Couldn't get exp date from token".to_string().into()),
+            ));
         };
 
         Outcome::Success(AuthenticatedUser {
             user,
-            roles: vec![],
+            roles: vec![], // TODO
+            token: token.to_string(),
+            expires_at,
         })
     }
 }
