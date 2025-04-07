@@ -31,6 +31,10 @@ A no-nonsense authentication microservice built in Rust. This project is a work 
 
 This is a work in progress. The code works (mostly), but there are rough edges. I'm building this to learn, so expect refactors, breaking changes, and the occasional "what was I thinking?" commit.
 
+Some known design issues, that makes the code no so consistant and pretty hard to test:
+- Controllers should have been made public over a trait to be mockable
+- Models are currently passive rather than having private (module-relative) functions
+
 ## TODO
 
 - [ ] Actually add some unit test
