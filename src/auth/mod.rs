@@ -10,7 +10,7 @@ use interfaces::{AccessToken, UserLogin};
 use crate::{
     core::{errors::ApiError, from_request::AuthenticatedUser, jwt, password, DbPool},
     revoked_token::{model::RevokedToken, services as token_services},
-    user::{interfaces::UserCreationRequest, model::User, services as user_services},
+    user::{interfaces::UserCreationRequest, services as user_services},
 };
 
 /// Returns all auth-related routes for mounting in the application
@@ -78,7 +78,7 @@ pub async fn revoke_token(
     // Make the token to revoke
     let token_to_revoke = RevokedToken {
         token: user.token,
-        expiration_date: user.expires_at,
+        expiration_date: user.token_expires_at,
     };
 
     // Call service to cancel it
@@ -89,6 +89,6 @@ pub async fn revoke_token(
 }
 
 #[get("/verify")]
-pub async fn verify_user(user: AuthenticatedUser) -> ApiResponse<User, ()> {
-    ok(user.user)
+pub async fn verify_user(user: AuthenticatedUser) -> ApiResponse<AuthenticatedUser, ()> {
+    ok(user)
 }

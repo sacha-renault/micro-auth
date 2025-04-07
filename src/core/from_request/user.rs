@@ -2,6 +2,7 @@ use chrono::{NaiveDateTime, TimeZone, Utc};
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
 use rocket::State;
+use serde::Serialize;
 
 use crate::core::errors::ApiError;
 use crate::core::{jwt, DbPool};
@@ -10,12 +11,13 @@ use crate::role::model::{RoleType, UserRole};
 use crate::user::model::User;
 use crate::user::services as user_services;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AuthenticatedUser {
     pub user: User,           // We be replaced by User when struct exists
     pub roles: Vec<UserRole>, // User can have many role depending on the scope
+    #[serde(skip_serializing)]
     pub token: String,
-    pub expires_at: NaiveDateTime,
+    pub token_expires_at: NaiveDateTime,
 }
 
 #[rocket::async_trait]
@@ -95,7 +97,7 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
         };
 
         // Get exp date
-        let expires_at = if let Some(dt) = Utc.timestamp_micros(claims.exp as i64).single() {
+        let token_expires_at = if let Some(dt) = Utc.timestamp_micros(claims.exp as i64).single() {
             dt.naive_utc()
         } else {
             return Outcome::Error((
@@ -108,7 +110,7 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
             user,
             roles: vec![], // TODO
             token: token.to_string(),
-            expires_at,
+            token_expires_at,
         })
     }
 }
