@@ -88,7 +88,7 @@ pub async fn revoke_token(
     }
 }
 
-#[get("/verify")]
+#[get("/verify_user")]
 pub async fn verify_user(user: AuthenticatedUser) -> ApiResponse<AuthenticatedUser, ()> {
     ok(user)
 }

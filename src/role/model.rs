@@ -44,7 +44,7 @@ impl Type<Sqlite> for RoleType {
     }
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
 pub struct UserRole {
     pub id: i64,
     pub user_id: i64,

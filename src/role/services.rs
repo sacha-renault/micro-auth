@@ -1,7 +1,11 @@
-use crate::core::{errors::ApiError, from_request::AuthenticatedUser, DbPool};
+use rocket_responder::service_unavailable;
 
-use super::controller::{add_role, get_user_role_in_scope, update_role};
+use crate::core::{errors::ApiError, from_request::AuthenticatedUser, DbPool};
+use crate::revoked_token::services;
+
+use super::controller::{self, add_role, get_user_role_in_scope, update_role};
 use super::interfaces::RoleAssignRequest;
+use super::model::UserRole;
 
 pub async fn assign_role(
     user_assign_request: RoleAssignRequest,
@@ -39,4 +43,8 @@ pub async fn assign_role(
             format!("User : {}", requesting_user.user_id()).into(),
         ))
     }
+}
+
+pub async fn get_roles_by_user_id(user_id: i64, pool: &DbPool) -> Result<Vec<UserRole>, ApiError> {
+    Ok(controller::get_user_roles(user_id, pool).await?)
 }

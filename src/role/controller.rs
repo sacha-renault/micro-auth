@@ -65,3 +65,12 @@ pub async fn get_user_role_in_scope(
 
     Ok(result)
 }
+
+pub async fn get_user_roles(user_id: i64, pool: &DbPool) -> Result<Vec<UserRole>, ApiError> {
+    let result = sqlx::query_as::<_, UserRole>("SELECT * FROM user_roles WHERE user_id = ?")
+        .bind(user_id)
+        .fetch_all(pool)
+        .await?;
+
+    Ok(result)
+}
