@@ -1,6 +1,6 @@
 mod controller;
-mod interfaces;
-mod model;
+pub mod interfaces;
+pub mod model;
 
 #[cfg(test)]
 mod tests;

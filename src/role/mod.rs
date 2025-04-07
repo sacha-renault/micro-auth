@@ -1,14 +1,17 @@
+mod controller;
+pub mod interfaces;
+pub mod model;
+pub mod services;
+
+#[cfg(test)]
+mod tests;
+
 use interfaces::RoleAssignRequest;
 use model::{RoleType, UserRole};
 use rocket::{serde::json::Json, Route, State};
 use rocket_responder::{ok, ApiResponse};
 
 use crate::core::{errors::ApiError, from_request::AuthenticatedUser, DbPool};
-
-mod controller;
-pub mod interfaces;
-pub mod model;
-pub mod services;
 
 #[post("/create", data = "<user_role>")]
 pub async fn create_role(
