@@ -10,6 +10,9 @@ mod role;
 mod scope;
 mod user;
 
+#[cfg(test)]
+mod _tests;
+
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
     // Set up database connection pool
