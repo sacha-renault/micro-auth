@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 
-#[derive(Deserialize, Serialize, FromRow)]
+#[derive(Debug, Deserialize, Serialize, FromRow)]
 pub struct Scope {
     /// Id of the scope
     pub id: i64,

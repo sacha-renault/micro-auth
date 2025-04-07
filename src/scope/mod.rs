@@ -2,6 +2,9 @@ mod controller;
 mod interfaces;
 mod model;
 
+#[cfg(test)]
+mod tests;
+
 use rocket::serde::json::Json;
 use rocket::{post, Route, State};
 use rocket_responder::*;
