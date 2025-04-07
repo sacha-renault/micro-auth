@@ -8,6 +8,7 @@ use crate::core::errors::ApiError;
 use crate::core::{jwt, DbPool};
 use crate::revoked_token::services as token_services;
 use crate::role::model::{RoleType, UserRole};
+use crate::role::services as role_services;
 use crate::user::model::User;
 use crate::user::services as user_services;
 
@@ -106,9 +107,15 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
             ));
         };
 
+        // Get the roles the user have
+        let roles = match role_services::get_roles_by_user_id(user.id, pool).await {
+            Ok(roles) => roles,
+            Err(err) => return Outcome::Error((Status::InternalServerError, err)),
+        };
+
         Outcome::Success(AuthenticatedUser {
             user,
-            roles: vec![], // TODO
+            roles,
             token: token.to_string(),
             token_expires_at,
         })

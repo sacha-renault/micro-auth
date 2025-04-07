@@ -1,7 +1,4 @@
-use rocket_responder::service_unavailable;
-
 use crate::core::{errors::ApiError, from_request::AuthenticatedUser, DbPool};
-use crate::revoked_token::services;
 
 use super::controller::{self, add_role, get_user_role_in_scope, update_role};
 use super::interfaces::RoleAssignRequest;
