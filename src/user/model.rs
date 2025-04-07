@@ -14,6 +14,7 @@ pub struct User {
     pub first_name: String,
 
     /// Hash of the password
+    #[serde(skip_serializing)]
     pub password_hash: String,
 
     /// Family name of user

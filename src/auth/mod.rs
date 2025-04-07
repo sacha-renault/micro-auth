@@ -10,12 +10,12 @@ use interfaces::{AccessToken, UserLogin};
 use crate::{
     core::{errors::ApiError, from_request::AuthenticatedUser, jwt, password, DbPool},
     revoked_token::{model::RevokedToken, services as token_services},
-    user::{interfaces::UserCreationRequest, services as user_services},
+    user::{interfaces::UserCreationRequest, model::User, services as user_services},
 };
 
 /// Returns all auth-related routes for mounting in the application
 pub fn routes() -> Vec<Route> {
-    rocket::routes![register_user, login_user]
+    rocket::routes![register_user, login_user, revoke_token, verify_user]
 }
 
 #[post("/register", data = "<user_request>")]
@@ -70,7 +70,7 @@ pub async fn login_user(
     }
 }
 
-#[post("/revoke")]
+#[get("/revoke")]
 pub async fn revoke_token(
     user: AuthenticatedUser,
     pool: &State<DbPool>,
@@ -86,4 +86,9 @@ pub async fn revoke_token(
         Ok(_) => ok("Token revoked successfully".to_string()),
         Err(err) => ApiResponse::from(err),
     }
+}
+
+#[get("/verify")]
+pub async fn verify_user(user: AuthenticatedUser) -> ApiResponse<User, ()> {
+    ok(user.user)
 }
